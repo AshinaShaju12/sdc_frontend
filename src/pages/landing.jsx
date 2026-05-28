@@ -1,6 +1,7 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, History, Sparkles, Building2, TrendingUp, Activity } from "lucide-react";
+import { Search, History, Sparkles, Building2, TrendingUp, Activity, UploadCloud, FileText, X } from "lucide-react";
 import Button from "shared-ui/src/components/ui/Button";
 
 const RECENT_SEARCHES = [
@@ -10,14 +11,50 @@ const RECENT_SEARCHES = [
   { term: "TechFlow Solutions", type: "trending" }
 ];
 
-const Dashboard = () => {  const navigate = useNavigate();
+
+const LandingPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showHistory, setShowHistory] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState(null);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const navigate = useNavigate();
+
+  const preventDefaults = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  const handleFile = (file) => {
+    if (!file) return;
+    setUploadedFile({
+      name: file.name,
+      size: `${(file.size / 1024 / 1024).toFixed(1)} MB`,
+    });
+  };
+
+  const handleDrop = (event) => {
+    preventDefaults(event);
+    setIsDragOver(false);
+    const file = event.dataTransfer.files?.[0];
+    if (file) handleFile(file);
+  };
+
+  const handleDrag = (event, over) => {
+    preventDefaults(event);
+    setIsDragOver(over);
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files?.[0];
+    if (file) handleFile(file);
+  };
 
   const handleSearch = (term) => {
     if (!term.trim()) return;
     setSearchTerm(term);
     setShowHistory(false);
+    // Navigate to details page with company name
+    navigate(`/details/${encodeURIComponent(term.trim())}`);
   };
 
   const filteredHistory = RECENT_SEARCHES.filter((s) => 
@@ -95,6 +132,64 @@ const Dashboard = () => {  const navigate = useNavigate();
             </ul>
           </div>
         )}
+
+        <div
+          className={`rounded-3xl border-2 border-dashed p-8 bg-white transition-colors duration-200 ${
+            isDragOver ? "border-indigo-400 bg-indigo-50/70" : "border-slate-200 bg-slate-50"
+          }`}
+          onDragEnter={(e) => handleDrag(e, true)}
+          onDragOver={(e) => handleDrag(e, true)}
+          onDragLeave={(e) => handleDrag(e, false)}
+          onDrop={handleDrop}
+        >
+          <div className="mx-auto flex max-w-lg flex-col items-center text-center gap-4 px-4 py-10">
+            <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-indigo-50 text-indigo-600 shadow-sm">
+              <UploadCloud className="w-8 h-8" />
+            </div>
+            <div>
+              <p className="text-lg font-semibold text-slate-900">Drag & Drop files here</p>
+              <p className="text-sm text-slate-500 mt-2">
+                Optional — upload contracts, RFP responses, or transcripts for instant synthesis.
+              </p>
+              <p className="text-xs text-slate-400 mt-3">Maximum file size: 50MB</p>
+            </div>
+            <div className="flex flex-wrap justify-center gap-3">
+              <span className="rounded-full border border-red-100 bg-red-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-red-600">PDF</span>
+              <span className="rounded-full border border-sky-100 bg-sky-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-sky-600">DOCX</span>
+              <span className="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-600">EXCEL</span>
+            </div>
+            <label className="mt-4 inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-100 cursor-pointer">
+              Browse files
+              <input
+                type="file"
+                accept=".pdf,.docx,.xlsx"
+                className="hidden"
+                onChange={handleFileChange}
+              />
+            </label>
+          </div>
+
+          {uploadedFile && (
+            <div className="mt-6 rounded-3xl border border-slate-200 bg-white p-4 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="rounded-2xl bg-slate-100 p-3 text-slate-600">
+                  <FileText className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="font-medium text-slate-900">{uploadedFile.name}</p>
+                  <p className="text-sm text-slate-500">{uploadedFile.size} • Ready to analyze</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setUploadedFile(null)}
+                className="rounded-full p-2 text-slate-400 hover:text-red-600"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="mt-12 flex items-center gap-8 text-sm text-gray-400 font-medium">
@@ -106,4 +201,4 @@ const Dashboard = () => {  const navigate = useNavigate();
   );
 };
 
-export default Dashboard;
+export default LandingPage;
