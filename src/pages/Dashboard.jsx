@@ -47,48 +47,7 @@ const Button = ({ children, className = "", ...props }) => (
 
 /* ---------------- MOCK DATA ---------------- */
 
-const ACCOUNTS_DATA = {
-  "Starlight Automotive": {
-    ticker: "STLA",
-    industry: "Automotive & Heavy Industry",
-    employees: "24,000",
-    revenue: "$14.2B",
-    brief:
-      "Leading Tier-1 OEM manufacturing premium vehicle chassis and sustainable bio-based coating systems.",
-    opportunities: [
-      {
-        name: "Specialty Bio-Based Coatings",
-        label: "92% Confidence"
-      }
-    ],
-    signals: [
-      {
-        title: "Tennessee Paintshop Expansion"
-      }
-    ],
-    stakeholders: [
-      {
-        name: "Robert Chen",
-        role: "VP of Manufacturing"
-      }
-    ],
-    discovery: [
-      {
-        q: "How are you transitioning to bio-based coatings?"
-      }
-    ],
-    objections: [
-      {
-        obj: "Switching suppliers is risky.",
-        ans: "We provide phased qualification programs."
-      },
-      {
-        obj: "Pricing premium is high.",
-        ans: "Energy savings reduce total lifecycle costs."
-      }
-    ]
-  }
-};
+// ACCOUNTS_DATA is fetched from API
 
 /* ---------------- MAIN COMPONENT ---------------- */
 
@@ -98,7 +57,8 @@ const AccountPortal = () => {
   const requestedAccount =
     searchParams.get("name") || "Starlight Automotive";
 
-  const accountInfo = ACCOUNTS_DATA[requestedAccount];
+  const [accountInfo, setAccountInfo] = useState(null);
+  const [isLoadingAccount, setIsLoadingAccount] = useState(true);
 
   const [chatInput, setChatInput] = useState("");
   const [chatMessages, setChatMessages] = useState([]);
@@ -108,19 +68,36 @@ const AccountPortal = () => {
   const [analysisStep, setAnalysisStep] = useState(0);
 
   useEffect(() => {
-    setChatMessages([
-      {
-        sender: "coach",
-        text: `Hello! I am your AI Deal Coach.
-
-I recommend targeting "${accountInfo.opportunities[0].name}" (${accountInfo.opportunities[0].label}).
-
-What would you like help with today?`
+    const fetchAccount = async () => {
+      try {
+        const response = await fetch(`/api/accounts/${encodeURIComponent(requestedAccount)}`);
+        if (response.ok) {
+          const data = await response.json();
+          setAccountInfo(data);
+          setChatMessages([
+            {
+              sender: "coach",
+              text: `Hello! I am your AI Deal Coach.\n\nI recommend targeting "${data.opportunities[0].name}" (${data.opportunities[0].label}).\n\nWhat would you like help with today?`
+            }
+          ]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch account info:", error);
+      } finally {
+        setIsLoadingAccount(false);
       }
-    ]);
-  }, []);
+    };
+    fetchAccount();
+  }, [requestedAccount]);
 
-  const handleSendMessage = (text) => {
+  if (isLoadingAccount) {
+    return <div className="min-h-screen bg-gray-100 p-6 flex items-center justify-center">Loading account details...</div>;
+  }
+  if (!accountInfo) {
+    return <div className="min-h-screen bg-gray-100 p-6 flex items-center justify-center">Account not found.</div>;
+  }
+
+  const handleSendMessage = async (text) => {
     if (!text.trim()) return;
 
     setChatMessages((prev) => [
@@ -131,57 +108,33 @@ What would you like help with today?`
     setChatInput("");
     setIsTyping(true);
 
-    setTimeout(() => {
-      let response = "";
-
-      const lower = text.toLowerCase();
-
-      if (lower.includes("why")) {
-        response = `
-Top reasons to contact this account:
-
-1. ${accountInfo.signals[0].title}
-
-2. Strong alignment with our bio-coating solutions.
-
-3. Active expansion and sustainability initiatives.
-`;
-      } else if (lower.includes("objection")) {
-        response = `
-Main Objections:
-
-1. ${accountInfo.objections[0].obj}
-
-Response:
-${accountInfo.objections[0].ans}
-
-2. ${accountInfo.objections[1].obj}
-
-Response:
-${accountInfo.objections[1].ans}
-`;
-      } else if (lower.includes("discovery")) {
-        response = `
-Discovery Question:
-
-${accountInfo.discovery[0].q}
-`;
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ account: requestedAccount, message: text }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setChatMessages((prev) => [
+          ...prev,
+          { sender: "coach", text: data.reply }
+        ]);
       } else {
-        response = `
-Recommended Stakeholder:
-
-${accountInfo.stakeholders[0].name}
-(${accountInfo.stakeholders[0].role})
-`;
+        setChatMessages((prev) => [
+          ...prev,
+          { sender: "coach", text: "Sorry, I encountered an error connecting to the server." }
+        ]);
       }
-
+    } catch (error) {
+      console.error("Chat error:", error);
       setChatMessages((prev) => [
         ...prev,
-        { sender: "coach", text: response }
+        { sender: "coach", text: "Sorry, I encountered an error connecting to the server." }
       ]);
-
+    } finally {
       setIsTyping(false);
-    }, 1000);
+    }
   };
 
   return (
