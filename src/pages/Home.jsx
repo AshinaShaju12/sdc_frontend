@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAnalysis } from "../store/AnalysisContext";
+import { useSettings } from "../store/SettingsContext";
 import { analyzeCompany } from "../services/analyzeService";
 import { useNavigate } from "react-router-dom";
 import {
@@ -130,6 +131,8 @@ export default function Home() {
     }
   };
 
+  const { formatCurrency } = useSettings();
+
   useEffect(() => {
     fetch("/api/dashboard-summary")
       .then(res => res.json())
@@ -137,7 +140,13 @@ export default function Home() {
       .catch(err => console.error("Error fetching dashboard data:", err));
   }, []);
 
-  const currentStats = dashboardData?.stats || stats;
+  const rawStats = dashboardData?.stats || stats;
+  const currentStats = rawStats.map(stat => {
+    if (stat.title.toLowerCase().includes("revenue") || stat.title.toLowerCase().includes("pipeline")) {
+      return { ...stat, value: formatCurrency(stat.value) };
+    }
+    return stat;
+  });
   const currentRecommendations = dashboardData?.recommendations || recommendations;
   const currentTargetAccounts = dashboardData?.target_accounts || dashboardData?.targetAccounts || targetAccounts;
   const currentSignals = dashboardData?.signals || signals;

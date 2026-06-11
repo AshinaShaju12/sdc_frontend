@@ -57,3 +57,144 @@ body {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+/* ================= DARK MODE OVERRIDES ================= */
+.dark body {
+  background-color: #0b0f19;
+  color: #f1f5f9;
+}
+
+.dark .bg-white {
+  background-color: #161c2a !important;
+  color: #f1f5f9;
+}
+
+.dark .text-gray-900,
+.dark .text-slate-950,
+.dark .text-slate-900 {
+  color: #f8fafc !important;
+}
+
+.dark .text-gray-800 {
+  color: #e2e8f0 !important;
+}
+
+.dark .text-gray-700,
+.dark .text-slate-700 {
+  color: #cbd5e1 !important;
+}
+
+.dark .text-gray-600,
+.dark .text-slate-600 {
+  color: #94a3b8 !important;
+}
+
+.dark .border-gray-100 {
+  border-color: #1e293b !important;
+}
+
+.dark .border-gray-200,
+.dark .border-slate-200 {
+  border-color: #334155 !important;
+}
+
+.dark .border-slate-300 {
+  border-color: #475569 !important;
+}
+
+.dark .bg-gray-50\/50 {
+  background-color: rgba(30, 41, 59, 0.5) !important;
+}
+
+.dark .bg-gray-50,
+.dark .bg-slate-50 {
+  background-color: #0f172a !important;
+}
+
+.dark .bg-slate-100 {
+  background-color: #1e293b !important;
+}
+
+.dark .bg-\[\#F4FCFF\] {
+  background-color: #080c14 !important;
+}
+
+.dark input,
+.dark select,
+.dark textarea {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+.dark input::placeholder {
+  color: #64748b !important;
+}
+
+.dark button.border-gray-200 {
+  border-color: #334155 !important;
+  color: #cbd5e1 !important;
+}
+
+.dark button.border-gray-200:hover {
+  background-color: #1e293b !important;
+}
+
+.dark .shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.5) !important;
+}
+
+.dark .bg-emerald-50 {
+  background-color: rgba(16, 185, 129, 0.1) !important;
+}
+
+.dark .text-emerald-700 {
+  color: #34d399 !important;
+}
+
+.dark .border-emerald-500 {
+  border-color: #059669 !important;
+}
+
+/* ================= LAYOUT COMPACT OVERRIDES ================= */
+html.layout-compact .p-8,
+html.layout-compact .lg\:p-8,
+html.layout-compact .p-6,
+html.layout-compact .md\:p-6,
+html.layout-compact .p-5,
+html.layout-compact .p-4,
+html.layout-compact .md\:p-4 {
+  padding: 0.75rem !important;
+}
+
+html.layout-compact .py-8,
+html.layout-compact .py-6,
+html.layout-compact .py-5 {
+  padding-top: 0.75rem !important;
+  padding-bottom: 0.75rem !important;
+}
+
+html.layout-compact .space-y-8 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 1rem !important;
+}
+
+html.layout-compact .space-y-6 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 0.75rem !important;
+}
+
+html.layout-compact .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 0.5rem !important;
+}
+
+html.layout-compact .gap-8 {
+  gap: 1rem !important;
+}
+
+html.layout-compact .gap-6 {
+  gap: 0.75rem !important;
+}
+
+html.layout-compact .gap-5 {
+  gap: 0.5rem !important;
+}
+

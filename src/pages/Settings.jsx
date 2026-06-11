@@ -11,40 +11,44 @@ import {
 } from "lucide-react";
 import Button from "shared-ui/src/components/ui/Button";
 
+import { useSettings } from "../store/SettingsContext";
+
 const Settings = () => {
-  // 1. Appearance & UI Preferences
-  const [theme, setTheme] = useState(localStorage.getItem("app_theme") || "system");
-  const [density, setDensity] = useState(localStorage.getItem("app_density") || "comfortable");
+  const {
+    theme,
+    setTheme,
+    density,
+    setDensity,
+    searchSuggestions,
+    setSearchSuggestions,
+    currency,
+    setCurrency,
+  } = useSettings();
 
-  // 2. Search & History Management
-  const [searchSuggestions, setSearchSuggestions] = useState(
-    localStorage.getItem("app_search_suggestions") !== "false"
-  );
-
-  // 3. Localization & Formatting
-  const [currency, setCurrency] = useState(localStorage.getItem("app_currency") || "USD");
-
-  // Save to localStorage whenever state changes
-  useEffect(() => {
-    localStorage.setItem("app_theme", theme);
-    localStorage.setItem("app_density", density);
-    localStorage.setItem("app_search_suggestions", searchSuggestions.toString());
-    localStorage.setItem("app_currency", currency);
-  }, [theme, density, searchSuggestions, currency]);
-
-  const handleClearHistory = () => {
-    // In a real app, this would clear the state/context
-    alert("Search history has been cleared.");
+  const handleClearHistory = async () => {
+    if (window.confirm("Are you sure you want to clear your search history from the database?")) {
+      try {
+        const res = await fetch("/api/history", { method: "DELETE" });
+        if (res.ok) {
+          alert("Search history has been cleared.");
+        } else {
+          alert("Failed to clear search history.");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Error connecting to server.");
+      }
+    }
   };
 
   const handleClearCache = () => {
-    if (window.confirm("Are you sure you want to clear all cached data and uploaded documents? This cannot be undone.")) {
+    if (window.confirm("Are you sure you want to clear all cached data? This will reset all preferences.")) {
       localStorage.clear();
-      // Restore the just-cleared settings so the UI doesn't break
-      localStorage.setItem("app_theme", theme);
-      localStorage.setItem("app_density", density);
-      localStorage.setItem("app_search_suggestions", searchSuggestions.toString());
-      localStorage.setItem("app_currency", currency);
+      // Reset settings states
+      setTheme("system");
+      setDensity("comfortable");
+      setSearchSuggestions(true);
+      setCurrency("USD");
       alert("All cached data and uploaded documents have been reset.");
     }
   };

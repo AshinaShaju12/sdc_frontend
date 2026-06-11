@@ -5,6 +5,7 @@ import { Search, History, Sparkles, Building2, TrendingUp, Activity, UploadCloud
 import Button from "shared-ui/src/components/ui/Button";
 import { analyzeCompany } from "../services/analyzeService";
 import { useAnalysis } from "../store/AnalysisContext";
+import { useSettings } from "../store/SettingsContext";
 
 const RECENT_SEARCHES = [
   { term: "Starlight Automotive", type: "recent" },
@@ -22,6 +23,7 @@ const LandingPage = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const navigate = useNavigate();
   const { setAnalysisData } = useAnalysis();
+  const { searchSuggestions } = useSettings();
 
   const preventDefaults = (event) => {
     event.preventDefault();
@@ -123,7 +125,7 @@ const LandingPage = () => {
         </div>
 
         {/* Search History Dropdown */}
-        {showHistory && filteredHistory.length > 0 && (
+        {searchSuggestions && showHistory && filteredHistory.length > 0 && (
           <div className="absolute top-[calc(100%-2px)] left-0 w-full bg-white border-x-2 border-b-2 border-blue-500 rounded-b-2xl shadow-xl z-50 overflow-hidden shadow-blue-500/10">
             <div className="px-5 py-2.5 bg-gray-50/80 border-b border-gray-100 flex items-center justify-between">
               <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Suggested Accounts</span>

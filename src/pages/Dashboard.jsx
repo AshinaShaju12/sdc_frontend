@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useSettings } from "../store/SettingsContext";
 import {
   TrendingUp,
   Building2,
@@ -53,42 +54,74 @@ const Button = ({ children, className = "", ...props }) => (
 
 const AccountPortal = () => {
   const [searchParams] = useSearchParams();
+  const { formatCurrency } = useSettings();
 
   const requestedAccount =
     searchParams.get("name") || "Starlight Automotive";
 
   const [accountInfo, setAccountInfo] = useState(null);
   const [isLoadingAccount, setIsLoadingAccount] = useState(true);
-
-  const [chatInput, setChatInput] = useState("");
+  const [companyInfo, setCompanyInfo] = useState(null);
+  const [isLoadingCompany, setIsLoadingCompany] = useState(true);
+  
+// Duplicate chatInput state removed
+  // Removed duplicate chatInput state
   const [chatMessages, setChatMessages] = useState([]);
-  const [isTyping, setIsTyping] = useState(false);
-
+  const [chatInput, setChatInput] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisStep, setAnalysisStep] = useState(0);
 
+  // Fetch company details from backend
   useEffect(() => {
-    const fetchAccount = async () => {
+    const fetchCompany = async () => {
       try {
-        const response = await fetch(`/api/accounts/${encodeURIComponent(requestedAccount)}`);
+        const response = await fetch('/api/companydata/company/details');
         if (response.ok) {
           const data = await response.json();
-          setAccountInfo(data);
-          setChatMessages([
-            {
-              sender: "coach",
-              text: `Hello! I am your AI Deal Coach.\n\nI recommend targeting "${data.opportunities[0].name}" (${data.opportunities[0].label}).\n\nWhat would you like help with today?`
-            }
-          ]);
+          setCompanyInfo(data);
+        } else {
+          console.error('Failed to fetch company details');
         }
       } catch (error) {
-        console.error("Failed to fetch account info:", error);
+        console.error('Error fetching company details:', error);
       } finally {
-        setIsLoadingAccount(false);
+        setIsLoadingCompany(false);
       }
     };
-    fetchAccount();
-  }, [requestedAccount]);
+    fetchCompany();
+  }, []);
+
+  // Render company details card after header
+  const renderCompanyDetails = () => {
+    if (isLoadingCompany) {
+      return <div className="text-center my-4">Loading company details...</div>;
+    }
+    if (!companyInfo) {
+      return null;
+    }
+    return (
+      <Card className="mt-6">
+        <CardHeader className="bg-indigo-700 text-white">
+          <CardTitle>Company Details</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-4">
+            <div><strong>Health Trend:</strong> {companyInfo.healthTrend}</div>
+            <div><strong>Industry:</strong> {companyInfo.industry}</div>
+            <div><strong>Annual Revenue:</strong> {formatCurrency(companyInfo.annualRevenue)}</div>
+            <div><strong>Strategic Fit:</strong> {companyInfo.strategicFit}%</div>
+            {companyInfo.nextMilestone && (
+              <div className="col-span-2">
+                <strong>Next Milestone:</strong> {companyInfo.nextMilestone.title} – {companyInfo.nextMilestone.date}
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+
+  // Insert renderCompanyDetails in JSX after the header section
 
   if (isLoadingAccount) {
     return <div className="min-h-screen bg-gray-100 p-6 flex items-center justify-center">Loading account details...</div>;
@@ -198,7 +231,7 @@ const AccountPortal = () => {
 
           <div className="flex items-center gap-2 text-green-600">
             <TrendingUp className="w-4 h-4" />
-            Revenue: {accountInfo.revenue}
+            Revenue: {formatCurrency(accountInfo.revenue)}
           </div>
         </div>
 
