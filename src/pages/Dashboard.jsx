@@ -44,11 +44,6 @@ const Button = ({ children, className = "", ...props }) => (
     {children}
   </button>
 );
- 
-
-/* ---------------- MOCK DATA ---------------- */
-
-// ACCOUNTS_DATA is fetched from API
 
 /* ---------------- MAIN COMPONENT ---------------- */
 
@@ -63,22 +58,43 @@ const AccountPortal = () => {
   const [isLoadingAccount, setIsLoadingAccount] = useState(true);
   const [companyInfo, setCompanyInfo] = useState(null);
   const [isLoadingCompany, setIsLoadingCompany] = useState(true);
-  
-// Duplicate chatInput state removed
-  // Removed duplicate chatInput state
   const [chatMessages, setChatMessages] = useState([]);
   const [chatInput, setChatInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisStep, setAnalysisStep] = useState(0);
 
-  // Fetch company details from backend
+  // Fetch account details from backend
+  useEffect(() => {
+    const fetchAccount = async () => {
+      try {
+        const response = await fetch(`/api/details/${encodeURIComponent(requestedAccount)}`);
+        if (response.ok) {
+          const data = await response.json();
+          setAccountInfo(data);
+        } else {
+          console.error('Failed to fetch account details');
+          setAccountInfo(null);
+        }
+      } catch (error) {
+        console.error('Error fetching account details:', error);
+        setAccountInfo(null);
+      } finally {
+        setIsLoadingAccount(false);
+      }
+    };
+    fetchAccount();
+  }, [requestedAccount]);
+
+  // Fetch company details from backend (MongoDB)
   useEffect(() => {
     const fetchCompany = async () => {
       try {
         const response = await fetch('/api/companydata/company/details');
         if (response.ok) {
-          const data = await response.json();
-          setCompanyInfo(data);
+          const json = await response.json();
+          // Unwrap from APIEnvelope { data: {...} }
+          setCompanyInfo(json.data || json);
         } else {
           console.error('Failed to fetch company details');
         }
@@ -91,25 +107,49 @@ const AccountPortal = () => {
     fetchCompany();
   }, []);
 
-  // Render company details card after header
+  // Render company details card
   const renderCompanyDetails = () => {
     if (isLoadingCompany) {
-      return <div className="text-center my-4">Loading company details...</div>;
+      return (
+        <div className="text-center my-4 text-gray-500">
+          <div className="animate-pulse">Loading company details...</div>
+        </div>
+      );
     }
     if (!companyInfo) {
       return null;
     }
     return (
       <Card className="mt-6">
-        <CardHeader className="bg-indigo-700 text-white">
-          <CardTitle>Company Details</CardTitle>
+        <CardHeader className="bg-indigo-700 text-white rounded-t-2xl">
+          <CardTitle className="text-lg">Company Details</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-4">
-            <div><strong>Health Trend:</strong> {companyInfo.healthTrend}</div>
-            <div><strong>Industry:</strong> {companyInfo.industry}</div>
-            <div><strong>Annual Revenue:</strong> {formatCurrency(companyInfo.annualRevenue)}</div>
-            <div><strong>Strategic Fit:</strong> {companyInfo.strategicFit}%</div>
+            {companyInfo.healthTrend && (
+              <div><strong>Health Trend:</strong> {companyInfo.healthTrend}</div>
+            )}
+            {companyInfo.industry && (
+              <div><strong>Industry:</strong> {companyInfo.industry}</div>
+            )}
+            {companyInfo.annualRevenue && (
+              <div><strong>Annual Revenue:</strong> {formatCurrency(companyInfo.annualRevenue)}</div>
+            )}
+            {companyInfo.strategicFit != null && (
+              <div><strong>Strategic Fit:</strong> {companyInfo.strategicFit}%</div>
+            )}
+            {companyInfo.companyName && (
+              <div><strong>Company:</strong> {companyInfo.companyName}</div>
+            )}
+            {companyInfo.location && (
+              <div><strong>Location:</strong> {companyInfo.location}</div>
+            )}
+            {companyInfo.employees && (
+              <div><strong>Employees:</strong> {companyInfo.employees}</div>
+            )}
+            {companyInfo.website && (
+              <div><strong>Website:</strong> <a href={companyInfo.website} target="_blank" rel="noreferrer" className="text-blue-600 underline">{companyInfo.website}</a></div>
+            )}
             {companyInfo.nextMilestone && (
               <div className="col-span-2">
                 <strong>Next Milestone:</strong> {companyInfo.nextMilestone.title} – {companyInfo.nextMilestone.date}
@@ -121,13 +161,12 @@ const AccountPortal = () => {
     );
   };
 
-  // Insert renderCompanyDetails in JSX after the header section
-
   if (isLoadingAccount) {
-    return <div className="min-h-screen bg-gray-100 p-6 flex items-center justify-center">Loading account details...</div>;
-  }
-  if (!accountInfo) {
-    return <div className="min-h-screen bg-gray-100 p-6 flex items-center justify-center">Account not found.</div>;
+    return (
+      <div className="min-h-screen bg-gray-100 p-6 flex items-center justify-center">
+        <div className="animate-pulse text-gray-500">Loading account details...</div>
+      </div>
+    );
   }
 
   const handleSendMessage = async (text) => {
@@ -221,27 +260,38 @@ const AccountPortal = () => {
           {requestedAccount}
         </h1>
 
-        <div className="flex justify-center gap-4 flex-wrap mb-4">
-          <Badge>{accountInfo.ticker}</Badge>
+        {accountInfo && (
+          <div className="flex justify-center gap-4 flex-wrap mb-4">
+            {accountInfo.ticker && <Badge>{accountInfo.ticker}</Badge>}
 
-          <div className="flex items-center gap-2">
-            <Building2 className="w-4 h-4" />
-            {accountInfo.industry}
+            {accountInfo.industry && (
+              <div className="flex items-center gap-2">
+                <Building2 className="w-4 h-4" />
+                {accountInfo.industry}
+              </div>
+            )}
+
+            {accountInfo.revenue && (
+              <div className="flex items-center gap-2 text-green-600">
+                <TrendingUp className="w-4 h-4" />
+                Revenue: {formatCurrency(accountInfo.revenue)}
+              </div>
+            )}
           </div>
+        )}
 
-          <div className="flex items-center gap-2 text-green-600">
-            <TrendingUp className="w-4 h-4" />
-            Revenue: {formatCurrency(accountInfo.revenue)}
-          </div>
-        </div>
-
-        <p className="max-w-3xl mx-auto text-gray-600">
-          {accountInfo.brief}
-        </p>
+        {accountInfo?.brief && (
+          <p className="max-w-3xl mx-auto text-gray-600">
+            {accountInfo.brief}
+          </p>
+        )}
       </div>
 
+      {/* COMPANY DETAILS FROM MONGODB */}
+      {renderCompanyDetails()}
+
       {/* AI CHAT */}
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto mt-8">
         <Card className="overflow-hidden">
 
           <CardHeader className="bg-blue-700 text-white flex justify-between items-center">

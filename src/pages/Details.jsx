@@ -162,13 +162,13 @@ const Details = () => {
                     <TableCell className="px-0 py-4 align-top">
                       <div className="flex items-center gap-3">
                         <div className="w-16 h-1 bg-gray-200 rounded-full overflow-hidden flex-shrink-0">
-                          <div className="h-full bg-emerald-600" style={{ width: `90%` }}></div>
+                          <div className="h-full bg-emerald-600" style={{ width: `${row.match_percentage ?? row.match ?? 0}%` }}></div>
                         </div>
-                        <span className="font-bold text-sm text-slate-800">90%</span>
+                        <span className="font-bold text-sm text-slate-800">{row.match_percentage ?? row.match ?? 0}%</span>
                       </div>
                     </TableCell>
                     <TableCell className="px-0 py-4 align-top font-bold text-sm text-slate-800">
-                      TBD
+                      {row.dealValue || row.deal_value || 'TBD'}
                     </TableCell>
                     <TableCell className="px-0 py-4 align-top text-right">
                       <button className="text-[#352582] hover:text-[#1f125a]">
