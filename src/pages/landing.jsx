@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, History, Sparkles, Building2, TrendingUp, Activity, UploadCloud, FileText, X } from "lucide-react";
 import Button from "shared-ui/src/components/ui/Button";
+import { analyzeCompany } from "../services/analyzeService";
+import { useAnalysis } from "../store/AnalysisContext";
 
 const RECENT_SEARCHES = [
   { term: "Starlight Automotive", type: "recent" },
@@ -17,7 +19,9 @@ const LandingPage = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const navigate = useNavigate();
+  const { setAnalysisData } = useAnalysis();
 
   const preventDefaults = (event) => {
     event.preventDefault();
@@ -49,12 +53,25 @@ const LandingPage = () => {
     if (file) handleFile(file);
   };
 
-  const handleSearch = (term) => {
+  const handleSearch = async (term) => {
     if (!term.trim()) return;
     setSearchTerm(term);
     setShowHistory(false);
-    // Navigate to details page with company name
-    navigate(`/details/${encodeURIComponent(term.trim())}`);
+    
+    setIsAnalyzing(true);
+    try {
+      // In LandingPage, uploadedFile is stored as {name, size} but we don't have the actual file object.
+      // Wait, in handleFile we did not save the actual file object.
+      // Let's pass the raw file if we can, but since we didn't save it, we just pass null for now or update handleFile.
+      const data = await analyzeCompany(term, null); // For now, passing null for file since LandingPage didn't save the raw file.
+      setAnalysisData(data.data || data);
+      navigate("/details");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to analyze company");
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   const filteredHistory = RECENT_SEARCHES.filter((s) => 
@@ -99,8 +116,8 @@ const LandingPage = () => {
             onKeyDown={(e) => e.key === 'Enter' && handleSearch(searchTerm)}
           />
           <div className="pr-2">
-            <Button variant="primary" size="lg" className="rounded-xl px-6" onClick={() => handleSearch(searchTerm)}>
-              Analyze
+            <Button variant="primary" size="lg" className="rounded-xl px-6" onClick={() => handleSearch(searchTerm)} disabled={isAnalyzing}>
+              {isAnalyzing ? "Analyzing..." : "Analyze"}
             </Button>
           </div>
         </div>

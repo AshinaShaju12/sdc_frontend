@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useAnalysis } from "../store/AnalysisContext";
+import { analyzeCompany } from "../services/analyzeService";
+import { useNavigate } from "react-router-dom";
 import {
   Sparkles,
   ArrowRight,
@@ -104,6 +107,40 @@ const signals = [
 export default function Home() {
   const [searchValue, setSearchValue] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
+  const [dashboardData, setDashboardData] = useState(null);
+  
+  const [companyInput, setCompanyInput] = useState("");
+  const [fileInput, setFileInput] = useState(null);
+  
+  const { setAnalysisData, isAnalyzing, setIsAnalyzing } = useAnalysis();
+  const navigate = useNavigate();
+
+  const handleAnalyze = async () => {
+    if (!companyInput) return;
+    setIsAnalyzing(true);
+    try {
+      const data = await analyzeCompany(companyInput, fileInput);
+      setAnalysisData(data.data || data);
+      navigate("/details");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to analyze company");
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  useEffect(() => {
+    fetch("/api/dashboard-summary")
+      .then(res => res.json())
+      .then(data => setDashboardData(data))
+      .catch(err => console.error("Error fetching dashboard data:", err));
+  }, []);
+
+  const currentStats = dashboardData?.stats || stats;
+  const currentRecommendations = dashboardData?.recommendations || recommendations;
+  const currentTargetAccounts = dashboardData?.target_accounts || dashboardData?.targetAccounts || targetAccounts;
+  const currentSignals = dashboardData?.signals || signals;
 
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-slate-50 text-slate-900">
@@ -132,6 +169,33 @@ export default function Home() {
           </div>
         </div>
 
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+          <h2 className="text-xl font-semibold mb-4 text-slate-900">Run Deep Analysis</h2>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+            <div className="flex-1 space-y-1">
+              <label className="text-sm font-medium text-slate-700">Company Name</label>
+              <input 
+                type="text" 
+                placeholder="e.g. Asian Paints" 
+                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                value={companyInput}
+                onChange={e => setCompanyInput(e.target.value)}
+              />
+            </div>
+            <div className="flex-1 space-y-1">
+              <label className="text-sm font-medium text-slate-700">Supplemental Documents (Optional)</label>
+              <input 
+                type="file" 
+                className="w-full px-3 py-1.5 border border-slate-300 rounded-lg file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                onChange={e => setFileInput(e.target.files[0])}
+              />
+            </div>
+            <Button className="px-6 py-2.5 h-[42px]" onClick={handleAnalyze} disabled={isAnalyzing}>
+              {isAnalyzing ? "Analyzing (approx 30s)..." : "Analyze"}
+            </Button>
+          </div>
+        </div>
+
         <SearchFilterBar
           searchPlaceholder="Search accounts, stakeholders, or deal histories..."
           searchValue={searchValue}
@@ -142,7 +206,7 @@ export default function Home() {
         />
 
         <div className="grid gap-5 xl:grid-cols-4">
-          {stats.map((stat) => (
+          {currentStats.map((stat) => (
             <StatCard
               key={stat.title}
               title={stat.title}
@@ -253,7 +317,7 @@ export default function Home() {
         </div>
 
         <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr_0.9fr]">
-          <RecommendationCard title="AI Recommended" recommendations={recommendations} />
+          <RecommendationCard title="AI Recommended" recommendations={currentRecommendations} />
 
           <Card>
             <CardHeader className="flex items-center justify-between gap-4">
@@ -266,7 +330,7 @@ export default function Home() {
               </Button>
             </CardHeader>
             <CardContent className="space-y-3">
-              {targetAccounts.map((account) => (
+              {currentTargetAccounts.map((account) => (
                 <div
                   key={account.name}
                   className="rounded-3xl border border-slate-200 bg-slate-50 p-4"
@@ -296,7 +360,7 @@ export default function Home() {
               </Button>
             </CardHeader>
             <CardContent className="space-y-4">
-              {signals.map((signal) => (
+              {currentSignals.map((signal) => (
                 <div key={signal.title} className="rounded-3xl bg-slate-50 p-4 border border-slate-100">
                   <div className="flex items-center justify-between gap-3 text-xs text-slate-500 uppercase tracking-[0.28em] font-semibold">
                     <span>{signal.label}</span>

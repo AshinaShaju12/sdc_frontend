@@ -9,6 +9,8 @@ import Inventory from "./pages/Inventory";
 import AccountPortal from "./pages/dashboard";
 import Login from "./pages/Login";
 import Details from "./pages/Details";
+import DealCoach from "./pages/DealCoach";
+import MeetingPrep from "./pages/MeetingPrep";
 import History from "./pages/History";
 import Settings from "./pages/Settings";
 
@@ -23,14 +25,17 @@ function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/account" element={<AccountPortal />} />
           <Route path="/inventory" element={<Inventory />} />
-          <Route path="/details/:companyName" element={<Details />} />
+          <Route path="/details" element={<Details />} />
+          <Route path="/deal-coach" element={<DealCoach />} />
+          <Route path="/meeting-prep" element={<MeetingPrep />} />
           <Route path="/history" element={<History />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
 
 
 
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
 
     </div>
