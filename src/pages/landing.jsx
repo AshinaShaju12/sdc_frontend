@@ -109,7 +109,7 @@ const LandingPage = () => {
           <Search className="w-6 h-6 text-gray-400 ml-5 absolute pointer-events-none" />
           <input
             type="text"
-            className="w-full h-16 pl-14 pr-4 bg-transparent outline-none text-lg text-gray-800 placeholder-gray-400"
+            className="flex-1 min-w-0 h-16 pl-14 pr-2 bg-transparent outline-none text-lg text-gray-800 placeholder-gray-400"
             placeholder="Search company name..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -117,10 +117,30 @@ const LandingPage = () => {
             onBlur={() => setTimeout(() => setShowHistory(false), 200)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch(searchTerm)}
           />
-          <div className="pr-2">
-            <Button variant="primary" size="lg" className="rounded-xl px-6" onClick={() => handleSearch(searchTerm)} disabled={isAnalyzing}>
+          <div style={{ paddingRight: '8px', flexShrink: 0 }}>
+            <button
+              onClick={() => handleSearch(searchTerm)}
+              disabled={isAnalyzing}
+              style={{
+                height: '48px',
+                padding: '0 24px',
+                backgroundColor: isAnalyzing ? '#5a9fd4' : '#0071C1',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '12px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: isAnalyzing ? 'not-allowed' : 'pointer',
+                whiteSpace: 'nowrap',
+                display: 'inline-flex',
+                alignItems: 'center',
+                transition: 'background-color 0.2s ease',
+              }}
+              onMouseEnter={(e) => { if (!isAnalyzing) e.currentTarget.style.backgroundColor = '#005fa3'; }}
+              onMouseLeave={(e) => { if (!isAnalyzing) e.currentTarget.style.backgroundColor = '#0071C1'; }}
+            >
               {isAnalyzing ? "Analyzing..." : "Analyze"}
-            </Button>
+            </button>
           </div>
         </div>
 

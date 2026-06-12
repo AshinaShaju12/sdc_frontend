@@ -11,7 +11,7 @@ body {
   font-family: 'Inter', sans-serif;
   background-color: #f7f9fb;
   color: #191c1e;
-  min-height: max(884px, 100dvh);
+  max-height: max(884px, 100dvh);
 }
 
 #root {
@@ -53,9 +53,12 @@ body {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .no-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 /* ================= DARK MODE OVERRIDES ================= */
@@ -68,6 +71,8 @@ body {
   background-color: #161c2a !important;
   color: #f1f5f9;
 }
+
+.dark .text-black { color: #f1f5f9 !important; }
 
 .dark .text-gray-900,
 .dark .text-slate-950,
@@ -174,15 +179,15 @@ html.layout-compact .py-5 {
   padding-bottom: 0.75rem !important;
 }
 
-html.layout-compact .space-y-8 > :not([hidden]) ~ :not([hidden]) {
+html.layout-compact .space-y-8> :not([hidden])~ :not([hidden]) {
   margin-top: 1rem !important;
 }
 
-html.layout-compact .space-y-6 > :not([hidden]) ~ :not([hidden]) {
+html.layout-compact .space-y-6> :not([hidden])~ :not([hidden]) {
   margin-top: 0.75rem !important;
 }
 
-html.layout-compact .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+html.layout-compact .space-y-4> :not([hidden])~ :not([hidden]) {
   margin-top: 0.5rem !important;
 }
 
@@ -197,4 +202,3 @@ html.layout-compact .gap-6 {
 html.layout-compact .gap-5 {
   gap: 0.5rem !important;
 }
-
