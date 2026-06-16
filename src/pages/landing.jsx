@@ -19,6 +19,7 @@ const LandingPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showHistory, setShowHistory] = useState(false);
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [rawFile, setRawFile] = useState(null);
   const [isDragOver, setIsDragOver] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const navigate = useNavigate();
@@ -36,6 +37,7 @@ const LandingPage = () => {
       name: file.name,
       size: `${(file.size / 1024 / 1024).toFixed(1)} MB`,
     });
+    setRawFile(file);
   };
 
   const handleDrop = (event) => {
@@ -62,10 +64,7 @@ const LandingPage = () => {
     
     setIsAnalyzing(true);
     try {
-      // In LandingPage, uploadedFile is stored as {name, size} but we don't have the actual file object.
-      // Wait, in handleFile we did not save the actual file object.
-      // Let's pass the raw file if we can, but since we didn't save it, we just pass null for now or update handleFile.
-      const data = await analyzeCompany(term, null); // For now, passing null for file since LandingPage didn't save the raw file.
+      const data = await analyzeCompany(term, rawFile);
       setAnalysisData(data.data || data);
       navigate("/details");
     } catch (err) {
@@ -221,7 +220,7 @@ const LandingPage = () => {
               </div>
               <button
                 type="button"
-                onClick={() => setUploadedFile(null)}
+                onClick={() => { setUploadedFile(null); setRawFile(null); }}
                 className="rounded-full p-2 text-slate-400 hover:text-red-600"
               >
                 <X className="w-4 h-4" />

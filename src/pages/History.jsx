@@ -12,10 +12,29 @@ const History = () => {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
+        // Read search history from local storage first
+        const localHist = localStorage.getItem("search_history");
+        if (localHist) {
+          try {
+            const parsed = JSON.parse(localHist);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              setPastCompanies(parsed);
+              setIsLoading(false);
+              return;
+            }
+          } catch (e) {
+            console.error("Failed to parse local search history:", e);
+          }
+        }
+
+        // Fallback to fetch from backend API
         const response = await fetch('/api/history');
         if (response.ok) {
           const data = await response.json();
-          setPastCompanies(data.data || []);
+          const backendHistory = data.data || [];
+          setPastCompanies(backendHistory);
+          // Sync backend history to localStorage for future use
+          localStorage.setItem("search_history", JSON.stringify(backendHistory));
         } else {
           console.error("Failed to fetch history");
         }

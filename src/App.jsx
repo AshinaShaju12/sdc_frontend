@@ -25,7 +25,7 @@ function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/account" element={<AccountPortal />} />
           <Route path="/inventory" element={<Inventory />} />
-          <Route path="/details" element={<Details />} />
+          <Route path="/details/:companyName?" element={<Details />} />
           <Route path="/deal-coach" element={<DealCoach />} />
           <Route path="/meeting-prep" element={<MeetingPrep />} />
           <Route path="/history" element={<History />} />

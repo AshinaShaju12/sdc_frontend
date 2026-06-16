@@ -1,5 +1,5 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
 import { useAnalysis } from "../store/AnalysisContext";
 import { Bell, Rocket, TrendingUp, Sparkles, Send, Download, Bot, User, MapPin } from "lucide-react";
 import {
@@ -18,7 +18,21 @@ import {
 } from "shared-ui/src/components/ui/Table";
 
 const Details = () => {
-  const { analysisData } = useAnalysis();
+  const { companyName } = useParams();
+  const { analysisData, setAnalysisData } = useAnalysis();
+
+  useEffect(() => {
+    if (companyName) {
+      const savedData = localStorage.getItem(`analysis_data_${companyName.toLowerCase()}`);
+      if (savedData) {
+        try {
+          setAnalysisData(JSON.parse(savedData));
+        } catch (e) {
+          console.error("Failed to parse historical data:", e);
+        }
+      }
+    }
+  }, [companyName, setAnalysisData]);
 
   if (!analysisData) {
     return (
