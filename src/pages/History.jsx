@@ -15,7 +15,7 @@ const History = () => {
         const response = await fetch('/api/history');
         if (response.ok) {
           const data = await response.json();
-          setPastCompanies(data);
+          setPastCompanies(data.data || []);
         } else {
           console.error("Failed to fetch history");
         }
