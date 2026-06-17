@@ -66,7 +66,7 @@ const LandingPage = () => {
     try {
       const data = await analyzeCompany(term, rawFile);
       setAnalysisData(data.data || data);
-      navigate("/details");
+      navigate(`/details/${encodeURIComponent(term)}`);
     } catch (err) {
       console.error(err);
       alert("Failed to analyze company");

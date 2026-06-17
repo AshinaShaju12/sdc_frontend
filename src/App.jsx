@@ -21,8 +21,9 @@ function App() {
 
 
         <Route element={<MainLayout />}>
-          <Route path="/" element={<LandingPage />} />
+          <Route path="/" element={<DashboardPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/analyse" element={<LandingPage />} />
           <Route path="/account" element={<AccountPortal />} />
           <Route path="/inventory" element={<Inventory />} />
           <Route path="/details/:companyName?" element={<Details />} />

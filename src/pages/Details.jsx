@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useAnalysis } from "../store/AnalysisContext";
-import { Bell, Rocket, TrendingUp, Sparkles, Send, Download, Bot, User, MapPin } from "lucide-react";
+import { Rocket, TrendingUp, Sparkles, Send, Download, Bot, User, MapPin } from "lucide-react";
 import {
   Card,
   Badge,
@@ -56,14 +56,6 @@ const Details = () => {
         {/* Header Section */}
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-2xl font-bold text-[#2d1b7a]">Company Analysis Dashboard</h1>
-          <div className="flex items-center gap-4">
-            <span className="px-3 py-1 bg-emerald-100 text-emerald-600 rounded-full text-xs font-bold tracking-wide">
-              Workspace Alpha
-            </span>
-            <button className="p-2 text-indigo-700 hover:bg-indigo-50 rounded-full">
-              <Bell className="w-5 h-5" />
-            </button>
-          </div>
         </div>
 
         {/* Top Cards Section */}

@@ -8,12 +8,14 @@ export default defineConfig({
     open: true,
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:8000',
+        target: 'https://semisweet-craziness-dreamless.ngrok-free.dev',
         changeOrigin: true,
         secure: false,
-        headers: {
-          // 'ngrok-skip-browser-warning': 'true'
-        }
+      },
+      '/media': {
+        target: 'http://localhost:8002',
+        changeOrigin: true,
+        secure: false,
       }
     }
   }

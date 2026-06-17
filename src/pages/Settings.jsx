@@ -4,7 +4,6 @@ import {
   Layout, 
   History, 
   Trash2, 
-  Globe, 
   Check,
   RefreshCw,
   Search
@@ -181,44 +180,6 @@ const Settings = () => {
                 <Trash2 className="w-4 h-4 mr-2" />
                 Reset Data
               </Button>
-            </div>
-          </div>
-        </section>
-
-        {/* Localization & Formatting */}
-        <section className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50 flex items-center gap-3">
-            <Globe className="w-5 h-5 text-emerald-500" />
-            <h2 className="text-lg font-bold text-gray-800">Localization & Formatting</h2>
-          </div>
-          
-          <div className="p-6">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-3">Currency Formatting</label>
-              <p className="text-sm text-gray-500 mb-4">Set the default currency for revenue and financial data.</p>
-              
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                {[
-                  { code: "USD", symbol: "$", name: "US Dollar" },
-                  { code: "EUR", symbol: "€", name: "Euro" },
-                  { code: "GBP", symbol: "£", name: "British Pound" },
-                  { code: "INR", symbol: "₹", name: "Indian Rupee" },
-                ].map((c) => (
-                  <div 
-                    key={c.code}
-                    onClick={() => setCurrency(c.code)}
-                    className={`cursor-pointer rounded-xl border p-3 flex flex-col items-center justify-center text-center transition-all ${
-                      currency === c.code ? 'border-emerald-500 bg-emerald-50 ring-1 ring-emerald-500' : 'border-gray-200 bg-white hover:border-gray-300'
-                    }`}
-                  >
-                    <span className={`text-xl font-bold mb-1 ${currency === c.code ? 'text-emerald-700' : 'text-gray-700'}`}>
-                      {c.symbol}
-                    </span>
-                    <span className="font-semibold text-sm text-gray-800">{c.code}</span>
-                    <span className="text-xs text-gray-500">{c.name}</span>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </section>
