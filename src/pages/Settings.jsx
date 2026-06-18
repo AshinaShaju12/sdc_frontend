@@ -73,7 +73,7 @@ const Settings = () => {
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-3">Theme Selection</label>
               <div className="flex flex-wrap gap-4">
-                {["light", "dark"].map((t) => (
+                {["light", "dark", "system"].map((t) => (
                   <button
                     key={t}
                     onClick={() => setTheme(t)}

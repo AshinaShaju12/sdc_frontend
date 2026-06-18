@@ -8,9 +8,6 @@ import {
   Users,
   Briefcase,
   PieChart,
-  BarChart,
-  Activity,
-  CheckCircle,
   Lightbulb,
   Award,
   TrendingUp,
@@ -336,169 +333,34 @@ export default function Home() {
           </Card>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-2">
-          {/* SECTION 5: Recent Case Studies */}
-          <Card className="rounded-3xl border-slate-200 shadow-sm overflow-hidden">
-            <CardHeader className="bg-slate-50 border-b border-slate-100 flex items-center gap-3 py-4">
-              <CheckCircle className="w-5 h-5 text-indigo-600" />
-              <h2 className="text-lg font-semibold text-slate-900">Recent Case Studies</h2>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="space-y-4">
-                {recentCaseStudies.map((cs, idx) => (
-                  <div key={idx} className="group relative rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition-all hover:border-indigo-100 hover:shadow-md">
-                    <div className="flex justify-between items-start gap-4">
-                      <div>
-                        <h3 className="font-semibold text-slate-900">{cs.clientName}</h3>
-                        <p className="text-sm font-medium text-slate-500 mt-1">{cs.projectTitle}</p>
-                      </div>
-                      <span className="inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">
-                        {cs.industry}
-                      </span>
-                    </div>
-                    <div className="mt-4 flex items-center gap-2">
-                      <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                      <p className="text-sm font-medium text-emerald-700">{cs.result}</p>
+        {/* SECTION 9: AI Strategic Recommendations */}
+        <Card className="rounded-3xl border-slate-200 shadow-sm overflow-hidden bg-gradient-to-br from-indigo-900 to-slate-900 text-white">
+          <CardHeader className="border-b border-white/10 flex items-center gap-3 py-4">
+            <Lightbulb className="w-5 h-5 text-indigo-300" />
+            <h2 className="text-lg font-semibold text-white">AI Strategic Recommendations</h2>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="space-y-4">
+              {aiRecommendations.length > 0 ? aiRecommendations.map((rec, idx) => (
+                <div key={idx} className="flex gap-3">
+                  <div className="mt-0.5 shrink-0">
+                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-indigo-500/20 text-indigo-300">
+                      <span className="text-[10px] font-bold">{idx + 1}</span>
                     </div>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* SECTION 6: Opportunity Pipeline */}
-          <Card className="rounded-3xl border-slate-200 shadow-sm overflow-hidden">
-            <CardHeader className="bg-slate-50 border-b border-slate-100 flex items-center gap-3 py-4">
-              <BarChart className="w-5 h-5 text-indigo-600" />
-              <h2 className="text-lg font-semibold text-slate-900">Opportunity Pipeline</h2>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="space-y-3">
-                {opportunityPipeline.map((stage, idx) => {
-                  const maxCount = Math.max(...opportunityPipeline.map(s => s.count)) || 1;
-                  const widthPercentage = Math.round((stage.count / maxCount) * 100);
-                  
-                  // Funnel colors mapping
-                  const colorMap = {
-                    'Lead': 'bg-slate-300',
-                    'Qualified': 'bg-indigo-300',
-                    'Proposal Sent': 'bg-indigo-400',
-                    'Negotiation': 'bg-indigo-500',
-                    'Won': 'bg-emerald-500',
-                    'Lost': 'bg-rose-400'
-                  };
-                  const barColor = colorMap[stage.stage] || 'bg-slate-400';
-
-                  return (
-                    <div key={idx} className="flex items-center gap-4">
-                      <div className="w-28 text-sm font-medium text-slate-600 text-right shrink-0">
-                        {stage.stage}
-                      </div>
-                      <div className="flex-1 flex items-center gap-3">
-                        <div className="h-8 w-full rounded-full bg-slate-50 overflow-hidden flex-1">
-                          <div 
-                            className={`h-full rounded-full transition-all duration-1000 ${barColor}`} 
-                            style={{ width: `${widthPercentage}%` }}
-                          />
-                        </div>
-                        <div className="w-8 text-sm font-bold text-slate-900 shrink-0">
-                          {stage.count}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid gap-6 lg:grid-cols-3">
-          {/* SECTION 7: CRM Activity Summary */}
-          <Card className="rounded-3xl border-slate-200 shadow-sm overflow-hidden">
-            <CardHeader className="bg-slate-50 border-b border-slate-100 flex items-center gap-3 py-4">
-              <Activity className="w-5 h-5 text-indigo-600" />
-              <h2 className="text-lg font-semibold text-slate-900">CRM Activity</h2>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="rounded-2xl bg-slate-50 p-4 border border-slate-100">
-                  <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Meetings (MTD)</p>
-                  <p className="mt-2 text-2xl font-bold text-slate-900">{crmActivity.meetingsThisMonth || 0}</p>
+                  <p className="text-sm text-indigo-50 leading-relaxed">
+                    {rec}
+                  </p>
                 </div>
-                <div className="rounded-2xl bg-slate-50 p-4 border border-slate-100">
-                  <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Notes Added</p>
-                  <p className="mt-2 text-2xl font-bold text-slate-900">{crmActivity.notesAdded || 0}</p>
+              )) : (
+                <div className="flex items-center gap-3 text-indigo-200 text-sm">
+                  <AlertCircle className="w-5 h-5" />
+                  <p>No strategic insights generated yet.</p>
                 </div>
-                <div className="rounded-2xl bg-slate-50 p-4 border border-slate-100">
-                  <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Interactions</p>
-                  <p className="mt-2 text-2xl font-bold text-slate-900">{crmActivity.customerInteractions || 0}</p>
-                </div>
-                <div className="rounded-2xl bg-orange-50 p-4 border border-orange-100">
-                  <p className="text-xs font-medium text-orange-600 uppercase tracking-wider">Follow-Ups</p>
-                  <p className="mt-2 text-2xl font-bold text-orange-700">{crmActivity.followUpsPending || 0}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* SECTION 8: Proposal Analytics */}
-          <Card className="rounded-3xl border-slate-200 shadow-sm overflow-hidden">
-            <CardHeader className="bg-slate-50 border-b border-slate-100 flex items-center gap-3 py-4">
-              <FileText className="w-5 h-5 text-indigo-600" />
-              <h2 className="text-lg font-semibold text-slate-900">Proposal Analytics</h2>
-            </CardHeader>
-            <CardContent className="p-6 flex flex-col justify-center">
-              <div className="text-center mb-6">
-                <p className="text-4xl font-bold text-slate-900">{proposalAnalytics.total || 0}</p>
-                <p className="text-sm font-medium text-slate-500 mt-1">Total Proposals Generated</p>
-              </div>
-              <div className="grid grid-cols-3 gap-2">
-                <div className="text-center p-3 rounded-xl bg-emerald-50">
-                  <p className="text-xl font-bold text-emerald-700">{proposalAnalytics.approved || 0}</p>
-                  <p className="text-xs font-medium text-emerald-600 mt-1 uppercase">Approved</p>
-                </div>
-                <div className="text-center p-3 rounded-xl bg-rose-50">
-                  <p className="text-xl font-bold text-rose-700">{proposalAnalytics.rejected || 0}</p>
-                  <p className="text-xs font-medium text-rose-600 mt-1 uppercase">Rejected</p>
-                </div>
-                <div className="text-center p-3 rounded-xl bg-amber-50">
-                  <p className="text-xl font-bold text-amber-700">{proposalAnalytics.pending || 0}</p>
-                  <p className="text-xs font-medium text-amber-600 mt-1 uppercase">Pending</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* SECTION 9: AI Strategic Recommendations */}
-          <Card className="rounded-3xl border-slate-200 shadow-sm overflow-hidden bg-gradient-to-br from-indigo-900 to-slate-900 text-white">
-            <CardHeader className="border-b border-white/10 flex items-center gap-3 py-4">
-              <Lightbulb className="w-5 h-5 text-indigo-300" />
-              <h2 className="text-lg font-semibold text-white">AI Strategic Recommendations</h2>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="space-y-4">
-                {aiRecommendations.length > 0 ? aiRecommendations.map((rec, idx) => (
-                  <div key={idx} className="flex gap-3">
-                    <div className="mt-0.5 shrink-0">
-                      <div className="flex h-5 w-5 items-center justify-center rounded-full bg-indigo-500/20 text-indigo-300">
-                        <span className="text-[10px] font-bold">{idx + 1}</span>
-                      </div>
-                    </div>
-                    <p className="text-sm text-indigo-50 leading-relaxed">
-                      {rec}
-                    </p>
-                  </div>
-                )) : (
-                  <div className="flex items-center gap-3 text-indigo-200 text-sm">
-                    <AlertCircle className="w-5 h-5" />
-                    <p>No strategic insights generated yet.</p>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
       </div>
 

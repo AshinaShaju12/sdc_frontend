@@ -8,7 +8,7 @@ export default defineConfig({
     open: true,
     proxy: {
       '/api': {
-        target: 'https://semisweet-craziness-dreamless.ngrok-free.dev',
+        target: 'http://localhost:8002',
         changeOrigin: true,
         secure: false,
       },
