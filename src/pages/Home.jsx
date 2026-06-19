@@ -201,7 +201,7 @@ export default function Home() {
                 <Briefcase className="h-3.5 w-3.5" /> Internal Executive Dashboard
               </div>
               <h1 className="text-4xl font-bold tracking-tight text-slate-900">
-                NovaChem Solutions Pvt Ltd
+                GrowthlensAI
               </h1>
               <p className="text-lg text-slate-500 max-w-2xl">
                 Advanced Chemical & Industrial Solutions for Sustainable Manufacturing
@@ -559,11 +559,11 @@ export default function Home() {
                           </div>
                           
                           <div className="grid gap-4 mt-4 sm:grid-cols-2 text-xs">
-                            <div className="bg-slate-50/60 p-4 rounded-xl border border-slate-100/50">
+                            <div className="bg-slate-50/50 p-4 rounded-xl border border-slate-100/50">
                               <span className="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">Challenge</span>
                               <p className="text-slate-600 leading-relaxed">{item.challenge}</p>
                             </div>
-                            <div className="bg-slate-50/60 p-4 rounded-xl border border-slate-100/50">
+                            <div className="bg-slate-50/50 p-4 rounded-xl border border-slate-100/50">
                               <span className="block font-bold text-slate-700 uppercase tracking-wider text-[10px] mb-1">Solution Deployed</span>
                               <p className="text-slate-600 leading-relaxed">{item.solution}</p>
                             </div>
@@ -621,7 +621,7 @@ export default function Home() {
                               <p className="text-xs text-slate-400">Assigned Rep: <span className="font-semibold text-slate-600">{item.assignedSalesRep || "Unassigned"}</span></p>
                             </div>
                             
-                            <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-100 text-xs max-w-xl">
+                            <div className="bg-slate-50/50 p-3 rounded-xl border border-slate-100 text-xs max-w-xl">
                               <span className="block font-bold text-slate-500 uppercase tracking-widest text-[9px] mb-0.5">Next Action</span>
                               <p className="font-medium text-slate-800 leading-snug">{item.nextAction || "N/A"}</p>
                             </div>

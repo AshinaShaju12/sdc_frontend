@@ -157,7 +157,11 @@ body {
 }
 
 .dark .bg-gray-50\/50,
-.dark .bg-slate-50\/50 {
+.dark .bg-slate-50\/50,
+.dark .bg-slate-50\/60,
+.dark .bg-slate-50\/80,
+.dark .bg-gray-50\/60,
+.dark .bg-gray-50\/80 {
   background-color: rgba(30, 41, 59, 0.5) !important;
 }
 

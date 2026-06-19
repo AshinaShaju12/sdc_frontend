@@ -101,7 +101,7 @@ function mapAnalysisData(backendRes) {
   // 4. solution_mapping (fields renamed/mapped)
   const solution_mapping = (data.solution_mapping || []).map(sm => ({
     requirement: sm.requirement || "General Requirement",
-    solution: sm.novachem_solution || "NovaChem Custom Solution",
+    solution: sm.novachem_solution || "GrowthlensAI Custom Solution",
     match_percentage: sm.match_percent !== undefined ? sm.match_percent : (sm.match || 70),
     deal_value: sm.deal_value || "TBD"
   }));
