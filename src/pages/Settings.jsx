@@ -47,7 +47,7 @@ const Settings = () => {
       setTheme("system");
       setDensity("comfortable");
       setSearchSuggestions(true);
-      setCurrency("USD");
+      setCurrency("INR");
       alert("All cached data and uploaded documents have been reset.");
     }
   };
@@ -85,6 +85,34 @@ const Settings = () => {
                   >
                     {theme === t && <Check className="w-4 h-4" />}
                     {t} Mode
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="w-full h-px bg-gray-100"></div>
+
+            {/* Currency Preference */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-3">Currency Preference</label>
+              <div className="flex flex-wrap gap-4">
+                {[
+                  { code: "USD", symbol: "$" },
+                  { code: "EUR", symbol: "€" },
+                  { code: "GBP", symbol: "£" },
+                  { code: "INR", symbol: "₹" }
+                ].map((curr) => (
+                  <button
+                    key={curr.code}
+                    onClick={() => setCurrency(curr.code)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl border font-medium uppercase transition-all ${
+                      currency === curr.code 
+                        ? 'border-blue-500 bg-blue-50 text-blue-700 ring-1 ring-blue-500' 
+                        : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+                    }`}
+                  >
+                    {currency === curr.code && <Check className="w-4 h-4" />}
+                    {curr.code} ({curr.symbol})
                   </button>
                 ))}
               </div>

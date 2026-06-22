@@ -17,7 +17,29 @@ import {
   TableCell,
 } from "shared-ui/src/components/ui/Table";
 
+// Simple markdown-ish renderer: bold (**text**), newlines → <br>
+function MessageText({ text }) {
+  if (!text) return null;
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return (
+    <span>
+      {parts.map((part, i) => {
+        if (part.startsWith("**") && part.endsWith("**")) {
+          return <strong key={i}>{part.slice(2, -2)}</strong>;
+        }
+        return part.split("\n").map((line, j, arr) => (
+          <React.Fragment key={`${i}-${j}`}>
+            {line}
+            {j < arr.length - 1 && <br />}
+          </React.Fragment>
+        ));
+      })}
+    </span>
+  );
+}
+
 const Details = () => {
+
   const { companyName } = useParams();
   const { analysisData, setAnalysisData } = useAnalysis();
 
@@ -106,9 +128,9 @@ const Details = () => {
             
             <div className="space-y-6">
               <div className="border-l-2 border-[#352582] pl-4">
-                <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">
-                  {intelligence_overview || "No overview generated."}
-                </p>
+                <div className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">
+                  <MessageText text={intelligence_overview || "No overview generated."} />
+                </div>
               </div>
             </div>
           </Card>

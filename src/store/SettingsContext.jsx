@@ -15,7 +15,7 @@ export const SettingsProvider = ({ children }) => {
   const [searchSuggestions, setSearchSuggestions] = useState(
     localStorage.getItem("app_search_suggestions") !== "false"
   );
-  const [currency, setCurrency] = useState(localStorage.getItem("app_currency") || "USD");
+  const [currency, setCurrency] = useState(localStorage.getItem("app_currency") || "INR");
 
   // Synchronize with LocalStorage
   useEffect(() => {

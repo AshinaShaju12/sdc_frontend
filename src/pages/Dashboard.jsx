@@ -47,6 +47,27 @@ const Button = ({ children, className = "", ...props }) => (
 
 /* ---------------- MAIN COMPONENT ---------------- */
 
+// Simple markdown-ish renderer: bold (**text**), newlines → <br>
+function MessageText({ text }) {
+  if (!text) return null;
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return (
+    <span>
+      {parts.map((part, i) => {
+        if (part.startsWith("**") && part.endsWith("**")) {
+          return <strong key={i}>{part.slice(2, -2)}</strong>;
+        }
+        return part.split("\n").map((line, j, arr) => (
+          <React.Fragment key={`${i}-${j}`}>
+            {line}
+            {j < arr.length - 1 && <br />}
+          </React.Fragment>
+        ));
+      })}
+    </span>
+  );
+}
+
 const AccountPortal = () => {
   const [searchParams] = useSearchParams();
   const { formatCurrency } = useSettings();
@@ -333,7 +354,7 @@ const AccountPortal = () => {
                         : "bg-white border"
                     }`}
                   >
-                    {msg.text}
+                    <MessageText text={msg.text} />
                   </div>
                 </div>
               ))}

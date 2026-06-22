@@ -51,6 +51,7 @@ const PremiumStatCard = ({ title, value, icon: Icon, trend, trendValue, subtitle
 );
 
 export default function Home() {
+  const { formatCurrency } = useSettings();
   const [dashboardData, setDashboardData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeModal, setActiveModal] = useState(null);
@@ -61,6 +62,9 @@ export default function Home() {
   const [modalError, setModalError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [modalPage, setModalPage] = useState(1);
+  const [modalTotal, setModalTotal] = useState(0);
+  const [modalPages, setModalPages] = useState(0);
 
   useEffect(() => {
     fetch("/api/dashboard", {
@@ -80,25 +84,34 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    setModalPage(1);
+  }, [activeModal]);
+
+  useEffect(() => {
     if (!activeModal) {
       setModalData([]);
       setModalError(null);
       setIsModalLoading(false);
       setSearchQuery("");
       setSelectedCategory("All");
+      setModalTotal(0);
+      setModalPages(0);
       return;
     }
 
     setIsModalLoading(true);
     setModalError(null);
 
+    const limit = 50;
+    const offset = (modalPage - 1) * limit;
+
     let endpoint = "";
     if (activeModal === "products") {
-      endpoint = "/api/companydata/product details?limit=100";
+      endpoint = `/api/companydata/product details?limit=${limit}&offset=${offset}`;
     } else if (activeModal === "case-studies") {
-      endpoint = "/api/companydata/case studies?limit=100";
+      endpoint = `/api/companydata/case studies?limit=${limit}&offset=${offset}`;
     } else if (activeModal === "opportunities") {
-      endpoint = "/api/companydata/Opportunity History?limit=100";
+      endpoint = `/api/companydata/Opportunity History?limit=${limit}&offset=${offset}`;
     }
 
     fetch(endpoint, {
@@ -111,16 +124,21 @@ export default function Home() {
         return res.json();
       })
       .then(data => {
-        const items = data.data?.items || data.items || data || [];
+        const payload = data.data || data;
+        const items = payload.items || payload || [];
+        const pagination = payload.pagination || {};
+
         setModalData(items);
+        setModalTotal(pagination.total || items.length || 0);
+        setModalPages(pagination.pages || (items.length > 0 ? 1 : 0));
         setIsModalLoading(false);
       })
       .catch(err => {
         console.error(`Error fetching full ${activeModal} from DB:`, err);
-        setModalError(`Failed to retrieve records from MongoDB: ${err.message}`);
+        setModalError(`Failed to retrieve records: ${err.message}`);
         setIsModalLoading(false);
       });
-  }, [activeModal]);
+  }, [activeModal, modalPage]);
 
   if (isLoading) {
     return (
@@ -322,7 +340,7 @@ export default function Home() {
                           </span>
                         </td>
                         <td className="px-6 py-4 text-right font-medium text-emerald-600">
-                          {sol.revenueImpact}
+                          {formatCurrency(sol.revenueImpact)}
                         </td>
                       </tr>
                     ))}
@@ -395,7 +413,7 @@ export default function Home() {
                     {activeModal === 'opportunities' && 'Active Opportunities & Deals'}
                   </h2>
                   <p className="text-xs text-slate-400 font-medium">
-                    Showing {filteredData.length} of {modalData.length} records fetched from MongoDB
+                    Showing {filteredData.length} of {modalData.length} records
                   </p>
                 </div>
               </div>
@@ -520,7 +538,7 @@ export default function Home() {
                             <div>
                               <span className="text-[10px] text-slate-400 block font-medium">Price</span>
                               <span className="text-sm font-bold text-indigo-600">
-                                {item.price ? `₹${item.price.toLocaleString('en-IN')}` : "Contact Sales"}
+                                {item.price ? formatCurrency(item.price) : "Contact Sales"}
                                 {item.unit ? <span className="text-slate-400 font-normal text-[10px]"> / {item.unit}</span> : ""}
                               </span>
                             </div>
@@ -664,6 +682,32 @@ export default function Home() {
                 </>
               )}
             </div>
+
+            {/* Modal Footer (Pagination Controls) */}
+            {modalPages > 1 && (
+              <div className="p-4 border-t border-slate-100 flex items-center justify-between bg-white shrink-0">
+                <span className="text-xs text-slate-500 font-medium">
+                  Showing {filteredData.length} records • Page {modalPage} of {modalPages} ({modalTotal} total)
+                </span>
+                
+                <div className="flex gap-2">
+                  <button
+                    disabled={modalPage === 1}
+                    onClick={() => setModalPage(prev => Math.max(prev - 1, 1))}
+                    className="px-3.5 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 bg-white hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+                  >
+                    Previous
+                  </button>
+                  <button
+                    disabled={modalPage === modalPages}
+                    onClick={() => setModalPage(prev => Math.min(prev + 1, modalPages))}
+                    className="px-3.5 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 bg-white hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
