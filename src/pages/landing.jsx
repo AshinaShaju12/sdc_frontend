@@ -105,7 +105,9 @@ const LandingPage = () => {
               : 'border border-gray-200 hover:border-gray-300 rounded-2xl hover:shadow-xl'
           } ${searchTerm && !showHistory ? 'border-2 border-blue-500 shadow-blue-500/10' : ''}`}
         >
-          <Search className="w-6 h-6 text-gray-400 ml-5 absolute pointer-events-none" />
+          <div className="absolute inset-y-0 left-0 flex items-center pl-5 pointer-events-none">
+            <Search className="w-6 h-6 text-gray-400" />
+          </div>
           <input
             type="text"
             className="flex-1 min-w-0 h-16 pl-14 pr-2 bg-transparent outline-none text-lg text-gray-800 placeholder-gray-400"

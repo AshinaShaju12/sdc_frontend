@@ -10,18 +10,25 @@ export default defineConfig(({ mode }) => {
     server: {
       port: parseInt(env.VITE_PORT) || 5000,
       open: true,
-      proxy: {
-        '/api': {
-          target: backendUrl,
-          changeOrigin: true,
-          secure: false,
-        },
-        '/media': {
-          target: backendUrl,
-          changeOrigin: true,
-          secure: false,
-        }
-      }
+     proxy: {
+  '/api/generate-document': {
+    target: 'http://localhost:8000',
+    changeOrigin: true,
+    secure: false,
+  },
+
+  '/api': {
+    target: backendUrl,
+    changeOrigin: true,
+    secure: false,
+  },
+
+  '/media': {
+    target: backendUrl,
+    changeOrigin: true,
+    secure: false,
+  }
+}
     }
   };
 });
